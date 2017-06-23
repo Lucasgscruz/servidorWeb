@@ -1,4 +1,4 @@
-# Jogo de Truco em rede
+# Modelos de Servidores Web
 Projeto apresentado ao curso de Ciência da Computação, da
 Universidade Federal de São João del Rei, como requisito parcial 
 para obtenção da nota final da disciplina de Redes de Computadores.
