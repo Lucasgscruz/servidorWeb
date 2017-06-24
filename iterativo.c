@@ -16,15 +16,16 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 void configura_porta(int argc,char const *argv[],int *num_porta){
-        //Recebe o novo número da porta do servidor e atualiza.
-        if(argc >= 2 && (atoi(argv[1])>1023)) {
-            *num_porta=atoi(argv[1]);
-            printf("Número da Porta definido: %d\n",*num_porta);
+    //Recebe o novo número da porta do servidor e atualiza.
+    if(argc >= 2 && (atoi(argv[1])>1023)) {
+        *num_porta=atoi(argv[1]);
+        printf("Número da Porta definido: %d\n",*num_porta);
 
-        }else{
-            printf("Utilizando a porta padrão definida: %d \n",*num_porta);
-        }
+    }else{
+        printf("Utilizando a porta padrão definida: %d \n",*num_porta);
+    }
 }
+
 
 int main(int argc, char const *argv[]){
     /* Variaveis para estabelecer a comunicacao */
@@ -69,17 +70,19 @@ int main(int argc, char const *argv[]){
             if (temp < 0) {
                     error("Erro ao ler o socket.\n");
             }
-            /*Escreve a resposta para o cliente*/
+            /*Resposta vinda do servidor"*/
             printf("Mensagem Recebida:\n %s\n",mensagem);
+            /*Escreve a resposta para o cliente*/
             temp=write(cliente,"HTTP/1.1 200 OK\n",16);
             write(cliente,"Server: Iterativo\n",18);
             write(cliente,"Connection: close\n",16);
-            write(cliente, "Content-length: 60\n", 19);
+            write(cliente, "Content-length: 87\n", 19);
             write(cliente, "Content-Type: text/html\n\n", 25);
-            write(cliente, "<!DOCTYPE html><html><body><h1>Alo Mundo!!<h1></body></html>",60);
+            write(cliente, "<!DOCTYPE html><html><head><title>Redes</title></head><body><h1>42...!!<h1></body></html>",87);
             if(temp<0) {
                 printf("erro ao escrever no socket\n");
             }
+            //Encerra a conexão com o cliente.
             close(cliente);
 
     }
