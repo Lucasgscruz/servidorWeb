@@ -67,7 +67,7 @@ int main(int argc, char const *argv[]){
             bzero(mensagem,1024);
             temp = read(cliente,mensagem,1024);
             if (temp < 0) {
-                    error("Erro ao ler o socket.\n");
+                perror("Erro ao ler o socket.\n");
             }
             /*Escreve a resposta para o cliente*/
             printf("Mensagem Recebida:\n %s\n",mensagem);
