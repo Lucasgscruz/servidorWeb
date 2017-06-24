@@ -75,10 +75,10 @@ int main(int argc, char const *argv[]){
             /*Escreve a resposta para o cliente*/
             temp=write(cliente,"HTTP/1.1 200 OK\n",16);
             write(cliente,"Server: Iterativo\n",18);
-            write(cliente,"Connection: close\n",16);
-            write(cliente, "Content-length: 87\n", 19);
-            write(cliente, "Content-Type: text/html\n\n", 25);
-            write(cliente, "<!DOCTYPE html><html><head><title>Redes</title></head><body><h1>42...!!<h1></body></html>",87);
+            write(cliente,"Connection: close\n",18);
+            write(cliente,"Content-length: 89\n", 19);
+            write(cliente,"Content-Type: text/html\n\n", 25);
+            write(cliente,"<!DOCTYPE html><html><head><title>Redes</title></head><body><h1>42...!!<h1></body></html>",89);
             if(temp<0) {
                 printf("erro ao escrever no socket\n");
             }
