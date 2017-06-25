@@ -6,6 +6,10 @@
    Licença: MIT
    Disciplina: Redes de Computadores
    Universidade Federal de São João del Rei - UFSJ
+
+   Baseado nos códigos:
+   http://www.binarytides.com/multiple-socket-connections-fdset-select-linux/
+
  */
 #include <strings.h>
 #include <stdio.h>
@@ -32,8 +36,7 @@ int main(int argc, char const *argv[]){
 
     int socket_principal = 0, num_porta = 5000, temp = 0,cliente=0,maior_descritor=0;
     int max_clientes=15,socket_cliente[100]={0},i=0;
-    char mensagem[1024];
-    fd_set read_descritor,write_descritor;
+    fd_set read_descritor;
     socklen_t cliente_len;
     struct sockaddr_in endereco_servidor, endereco_cliente;
     configura_porta(argc,argv,&num_porta);
@@ -68,11 +71,10 @@ int main(int argc, char const *argv[]){
 
         //inicializa o descritor.
         FD_ZERO(&read_descritor);
-        //FD_ZERO(&write_descritor);
 
         //Adiciona o socket principal no conjunto..
         FD_SET(socket_principal,&read_descritor);
-        FD_SET(socket_principal,&write_descritor);
+        //FD_SET(socket_principal,&write_descritor);
         maior_descritor=socket_principal;
 
         for(i=0;i<max_clientes;i++){
@@ -82,7 +84,7 @@ int main(int argc, char const *argv[]){
 
                 //Adiciona o indice do descritor na lista de leituras
                 FD_SET(temp,&read_descritor);
-                FD_SET(temp,&write_descritor);
+                //FD_SET(temp,&write_descritor);
 
             }
             if(temp>maior_descritor){
@@ -110,9 +112,11 @@ int main(int argc, char const *argv[]){
             }
             /*Envia mensagem para o cliente...*/
             send(cliente, "HTTP/1.1 200 OK\n", 16,0);
-            send(cliente, "Content-length: 46\n", 19,0);
+            send(cliente,"Server: C3PO-web7\n",19,0);
+            send(cliente,"Connection: close\n",18,0);
+            send(cliente,"Content-length: 89\n",19,0);
             send(cliente, "Content-Type: text/html\n\n", 25,0);
-            send(cliente, "<html><body><H1>Hello world</H1></body></html>",46,0);
+            send(cliente, "<!DOCTYPE html><html><head><title>Redes</title></head><body><h1>42...!!<h1></body></html>",89,0);
             //Adiciona o cliente na lista de clientes.
             for(i=0;i<max_clientes;i++){
                 if(socket_cliente[i]==0){
