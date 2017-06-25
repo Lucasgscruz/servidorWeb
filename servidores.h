@@ -9,29 +9,26 @@
 #include <netinet/in.h>
 
 // Variaveis para estabelecer a comunicacao
+    int num_porta = 5000;
 struct sockaddr_in endereco_servidor, endereco_cliente;
-int socket_con = 0, num_porta, flag = 0, cliente;
+int socket_con = 0, flag = 0, cliente = 0;
+int socket_principal = 0, temp = 0, maior_descritor = 0;
+int max_clientes = 15, socket_cliente[100] = {0}, i = 0;
 socklen_t cliente_len;
+fd_set read_descritor;
 char mensagem[1024];
 pid_t pid;
 
-<<<<<<< HEAD
-// Funcoes
-void configura_porta(int ,char const *argv[], int *num_porta);
-int menu(int, char const *argv[]);
-=======
-int menu(int argc,char const *argv[]);
-void resposta(int);
->>>>>>> 8ce474054b4b8923a26b837afad90fce93c987f6
+
+// Funçoes
+void configura_porta(int, char const **, int *);
+int menu(int, char const **);
+void error(const char *);
+void *funcao(void *);
+void concorrente(int);
 void iterativo(int);
 void resposta(int);
 void forked(int);
-<<<<<<< HEAD
+void fila(int);
 void help();
 
-
-
-
-=======
-void concorrente(int num_porta);
->>>>>>> 8ce474054b4b8923a26b837afad90fce93c987f6
