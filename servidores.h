@@ -7,16 +7,15 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 
-// Variaveis para estabelecer a comunicacao 
+// Variaveis para estabelecer a comunicacao
 struct sockaddr_in endereco_servidor, endereco_cliente;
 int socket_con = 0, num_porta, flag = 0, cliente;
 socklen_t cliente_len;
 char mensagem[1024];
 pid_t pid;
 
-int menu();
+int menu(int argc,char const *argv[]);
 void resposta(int);
 void iterativo(int);
 void forked(int);
-
-
+void concorrente(int num_porta);
