@@ -68,7 +68,7 @@ int main(int argc, char const *argv[]){
 
         //inicializa o descritor.
         FD_ZERO(&read_descritor);
-        FD_ZERO(&write_descritor);
+        //FD_ZERO(&write_descritor);
 
         //Adiciona o socket principal no conjunto..
         FD_SET(socket_principal,&read_descritor);

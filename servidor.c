@@ -10,21 +10,33 @@
 
 #include "servidores.h"
 
-int menu(){
+void help(){
+    printf("    ServidorWeb HELP -- Atenção!\n\
+    Favor digitar os parâmetros no seguinte formato:\n\
+        ./servidorweb porta modo\n\
+    Modos Disponiveis:\n\
+        1 - Iterativo\n\
+        2 - Multi Processos \n\
+        3 - Fila \n\
+        4 - Select\n\
+    Exemplo de comando válido:\n\
+        ./servidorweb 5002 1\n");
+}
+
+int menu(int argc,char const *argv[]){
 /* Menu de opçoes de modelos de servidor Web */
 
+    if(argc<2){
+        help();
+        exit(-1);
+    }
 	int modelo = 0;
+    modelo=atoi(argv[2]);
+    if(modelo<0 || modelo>4){
+        printf("Opção Inválida\n");
+        exit(-1);
+    }
 
-	while(modelo < 1 || modelo > 4){
-		printf("\tQual modelo de sevidor voce deseja utilizar?\n\
-		- 1: Iterativo\n\
-		- 2: Multi processos(fork)\n\
-		- 3: Fila\n\
-		- 4: Select\n");
-		scanf("\t%d",&modelo);
-		if(modelo > 0 && modelo < 5) break;
-		printf("\tOpçao invalida!\n\n");
-	}
 	return modelo;
 }
 
@@ -42,7 +54,8 @@ void configura_porta(int argc,char const *argv[],int *num_porta){
         printf("Número da Porta definido: %d\n",*num_porta);
 
     }else{
-        printf("Utilizando a porta padrão definida: %d \n",*num_porta);
+        printf("Utilizando a porta padrão definida: %d\n",*num_porta);
+        printf("Digite uma porta maior de 1023 para usar uma porta personalizada\n");
     }
 }
 
@@ -53,7 +66,7 @@ void resposta(int cliente){
 	int flag;
 
     flag=write(cliente,"HTTP/1.1 200 OK\n\
-    Server: Iterativo\n\
+    Server: C3PO-web7\n\
     Connection: close\n\
     Content-length: 89\n\
     Content-Type: text/html\n\n\
@@ -161,10 +174,10 @@ void forked(int num_porta){
 }
 
 int main(int argc, char const *argv[]){
-	int modelo = menu();
+	int modelo = menu(argc,argv);
     int num_porta=5000;
 
-	configura_porta(argc,argv,num_porta);
+	configura_porta(argc,argv,&num_porta);
 
 	if(modelo == 1)
 		iterativo(num_porta);
