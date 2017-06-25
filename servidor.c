@@ -36,42 +36,36 @@ void error(const char *msg){
 }
 
 void resposta(int cliente){
-	/*Escreve a resposta para o cliente*/	
+	/*Escreve a resposta para o cliente*/
 
 	int flag;
-	flag = write(cliente,"HTTP/1.1 200 OK\n\
-	Server: Iterativo\n\
-	Connection: close\n\
-	Content-length: 60\n\
-	Content-Type: text/html\n\n\
-	<!DOCTYPE html><html><body><h1>Alo Muuundo!!<h1></body></html>",159);
-
-    // flag = write(cliente,"HTTP/1.1 200 OK\n",16);
-    // write(cliente,"Server: Iterativo\n",18);
-    // write(cliente,"Connection: close\n",16);
-    // write(cliente, "Content-length: 60\n", 19);
-    // write(cliente, "Content-Type: text/html\n\n", 25);
-    // write(cliente, "<!DOCTYPE html><html><body><h1>Alo Mundo!!<h1></body></html>",60);
+	
+    flag=write(cliente,"HTTP/1.1 200 OK\n\
+    Server: Iterativo\n\
+    Connection: close\n\
+    Content-length: 89\n\
+    Content-Type: text/html\n\n\
+    <!DOCTYPE html><html><head><title>Redes</title></head><body><h1>42...!!<h1></body></html>",185);
 	//Erro ao enviar resposta para o cliente
-	if(flag < 0) 
+	if(flag < 0)
 		error("ERRO ao escrever resposta para o cliente!");
 }
 
 void iterativo(int num_porta){
-	// Abrindo o socket 
+	// Abrindo o socket
 	socket_con = socket(AF_INET, SOCK_STREAM,0);
 	if(socket_con < 0)
         error("ERRO ao abrir o socket.\n");
 
-    // Preenche com zero 
+    // Preenche com zero
     bzero((char *)&endereco_servidor, sizeof(endereco_servidor));
     endereco_servidor.sin_family = AF_INET;
     endereco_servidor.sin_addr.s_addr = INADDR_ANY;
     endereco_servidor.sin_port = htons(num_porta);
 
     // Associa uma porta ao socket
-    if(bind(socket_con, (struct sockaddr *) &endereco_servidor,sizeof(endereco_servidor)) < 0) 
-        error("ERRO ao Abrir a porta.");    
+    if(bind(socket_con, (struct sockaddr *) &endereco_servidor,sizeof(endereco_servidor)) < 0)
+        error("ERRO ao Abrir a porta.");
     printf("Aguardando conexão dos clientes...\n");
 
     // Tamanho maximo da fila de clientes
@@ -81,11 +75,11 @@ void iterativo(int num_porta){
     while(1){
     	// Estabelece conexao com o cliente
     	cliente = accept(socket_con,(struct sockaddr *) &endereco_cliente, &cliente_len);
-        
+
         if(cliente < 0)
             printf("ERRO na conexão com o cliente.");
         printf("\n\tCliente conectado!\n");
-   
+
         bzero(mensagem,1024);
 
         // Le requisicao enviada pelo cliente
@@ -93,7 +87,7 @@ void iterativo(int num_porta){
         if (flag < 0)
             error("ERRO ao ler o socket.\n");
         printf("Mensagem Recebida:\n %s\n",mensagem);
-        
+
         // Escreve a resposta para o cliente
  		resposta(cliente);
         close(cliente);
@@ -102,20 +96,20 @@ void iterativo(int num_porta){
 }
 
 void forked(int num_porta){
-	// Abrindo o socket 
+	// Abrindo o socket
 	socket_con = socket(AF_INET, SOCK_STREAM,0);
 	if(socket_con < 0)
         error("ERRO ao abrir o socket.\n");
 
-    // Preenche com zero 
+    // Preenche com zero
     bzero((char *)&endereco_servidor, sizeof(endereco_servidor));
     endereco_servidor.sin_family = AF_INET;
     endereco_servidor.sin_addr.s_addr = INADDR_ANY;
     endereco_servidor.sin_port = htons(num_porta);
 
     // Associa uma porta ao socket
-    if(bind(socket_con, (struct sockaddr *) &endereco_servidor,sizeof(endereco_servidor)) < 0) 
-        error("ERRO ao Abrir a porta.");    
+    if(bind(socket_con, (struct sockaddr *) &endereco_servidor,sizeof(endereco_servidor)) < 0)
+        error("ERRO ao Abrir a porta.");
     printf("Aguardando conexão dos clientes...\n");
 
     // Tamanho maximo da fila de clientes
@@ -125,7 +119,7 @@ void forked(int num_porta){
     while(1){
     	// Estabelece conexao com o cliente
     	cliente = accept(socket_con,(struct sockaddr *) &endereco_cliente, &cliente_len);
-        
+
         if(cliente < 0)
             printf("ERRO na conexão com o cliente.");
         printf("\n\tCliente conectado!\n");
@@ -145,23 +139,23 @@ void forked(int num_porta){
 			if (flag < 0)
 				error("Erro ao ler o socket.\n");
 
-			printf("Mensagem Recebida:\n %s\n", mensagem);	
-			resposta(cliente);						 
+			printf("Mensagem Recebida:\n %s\n", mensagem);
+			resposta(cliente);
 			exit(0);
-		}       
+		}
         close(cliente);
     }
     close(socket_con);
 }
 
-int main(int argc, char const *argv[]){	
+int main(int argc, char const *argv[]){
 	int modelo = menu();
-	
+
 	do{
 		printf("\nEscolha o numero da prota do servidor: numero maior que 1024\n");
 		scanf("%d", &num_porta);
 	}while(num_porta < 1024);
-	
+
 	if(modelo == 1)
 		iterativo(num_porta);
 
