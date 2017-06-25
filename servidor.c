@@ -11,16 +11,16 @@
 #include "servidores.h"
 
 void help(){
-    printf("    ServidorWeb HELP -- Atenção!\n\
-    Favor digitar os parâmetros no seguinte formato:\n\
-        ./servidorweb porta modo\n\
-    Modos Disponiveis:\n\
+    printf("    \nServidorWeb HELP -- Atenção!\n\
+    Digite os parâmetros no seguinte formato:\n\
+        ./servidorweb <porta> <modelo>\n\
+    Modelos de servidor disponiveis:\n\
         1 - Iterativo\n\
         2 - Multi Processos \n\
         3 - Fila \n\
         4 - Select\n\
     Exemplo de comando válido:\n\
-        ./servidorweb 5002 1\n");
+        ./servidorweb 5002 1\n\n");
 }
 
 int menu(int argc,char const *argv[]){
@@ -274,7 +274,7 @@ void forked(int num_porta){
 
 int main(int argc, char const *argv[]){
 	int modelo = menu(argc,argv);
-    int num_porta=5000;
+    num_porta=5000;
 
 	configura_porta(argc,argv,&num_porta);
     switch (modelo) {
@@ -292,9 +292,6 @@ int main(int argc, char const *argv[]){
         default:
             printf("Opção inválida.\n");
             exit(-1);
-
     }
-
-
 	return 0;
 }

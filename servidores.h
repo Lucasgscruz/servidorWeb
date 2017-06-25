@@ -15,9 +15,14 @@ socklen_t cliente_len;
 char mensagem[1024];
 pid_t pid;
 
-int menu();
-void resposta(int);
+// Funcoes
+void configura_porta(int ,char const *argv[], int *num_porta);
+int menu(int, char const *argv[]);
 void iterativo(int);
+void resposta(int);
 void forked(int);
+void help();
+
+
 
 
