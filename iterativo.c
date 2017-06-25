@@ -74,7 +74,7 @@ int main(int argc, char const *argv[]){
             printf("Mensagem Recebida:\n %s\n",mensagem);
             /*Escreve a resposta para o cliente*/
             temp=write(cliente,"HTTP/1.1 200 OK\n",16);
-            write(cliente,"Server: Iterativo\n",18);
+            write(cliente,"Server: C3PO-web7\n",18);
             write(cliente,"Connection: close\n",18);
             write(cliente,"Content-length: 89\n", 19);
             write(cliente,"Content-Type: text/html\n\n", 25);
