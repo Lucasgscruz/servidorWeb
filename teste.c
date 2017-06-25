@@ -61,50 +61,114 @@
 #include<sys/stat.h>    
 #include<sys/types.h>    
 #include<unistd.h>    
-    
-int main() {    
-   int create_socket, new_socket;    
-   socklen_t addrlen;    
-   int bufsize = 1024;    
-   char *buffer = malloc(bufsize);    
-   struct sockaddr_in address;    
+#include<pthread.h> 
+
+// int main() {    
+//    int create_socket, new_socket;    
+//    socklen_t addrlen;    
+//    int bufsize = 1024;    
+//    char *buffer = malloc(bufsize);    
+//    struct sockaddr_in address;    
  
-   if ((create_socket = socket(AF_INET, SOCK_STREAM, 0)) > 0){    
-      printf("The socket was created\n");
-   }
+//    if ((create_socket = socket(AF_INET, SOCK_STREAM, 0)) > 0){    
+//       printf("The socket was created\n");
+//    }
+	
+//    address.sin_family = AF_INET;    
+//    address.sin_addr.s_addr = INADDR_ANY;    
+//    address.sin_port = htons(15002);    
+	
+//    if (bind(create_socket, (struct sockaddr *) &address, sizeof(address)) == 0){    
+//       printf("Binding Socket\n");
+//    }
+	
+	
+//    while (1) {    
+//       if (listen(create_socket, 10) < 0) {    
+//          perror("server: listen");    
+//          exit(1);    
+//       }    
+	
+//       if ((new_socket = accept(create_socket, (struct sockaddr *) &address, &addrlen)) < 0) {    
+//          perror("server: accept");    
+//          exit(1);    
+//       }    
+	
+//       if (new_socket > 0){    
+//          printf("The Client is connected...\n");
+//       }
+		
+//       recv(new_socket, buffer, bufsize, 0);    
+//       printf("Mensagem recebida: \n%s\n", buffer);    
+//       write(new_socket, "HTTP/1.1 200 OK\n", 16); 
+//       write(new_socket, "Content-length: 46\n", 19); 
+//       write(new_socket, "Content-Type: text/html\n\n", 25); 
+//       write(new_socket, "<html><body><H1>Hello world</H1></body></html>",46);   
+//       close(new_socket);    
+//    }    
+//    close(create_socket);    
+//    return 0;    
+// }
+
+/* function to be executed by the new thread */
+#define NUM_THREADS 4
+int vet[10];
+
+void *OLA(void *arg){
+	int *valor = (void *) arg;
+	int i = 0;
+   	if(*valor == 0){
+   		for(i = 0; i<10; i++)
+   			vet[i] = 0;
+   		printf(" %d brinquei!\n", 0);
+   	}
+   	else if(*valor == 1){
+   		for(i = 0; i<10; i++)
+   			vet[i] = 1;
+   		printf(" %d brinquei!\n", 1);
+   	}
+   	else if(*valor == 2){
+   		for(i = 0; i<10; i++)
+   			vet[i] = 2;
+   		printf(" %d brinquei!\n", 2);
+   	}
+   	else if(*valor == 3){
+   		for(i = 0; i<10; i++)
+   			vet[i] = 3;
+   		printf(" %d brinquei!\n", 3);
+   	}
+	pthread_exit(NULL);
+}
+
+int main(){
+
+   pthread_t ramo[5];
+   int flag;
+   int j=0, k = 0;
+
+   printf("A criar uma nova thread\n\n");
+    while(j < 4){
+    	printf("Ja volteiiii! \n");
+   		flag = pthread_create(&ramo[j], NULL, OLA, &j);
+    	if (flag!=0) printf("Erro na criação duma nova thread\n");
+    	else
+    		printf("Thread %d criada \n",j );
+    	if( j == 3){ 
+    		j = 0;
+    		flag = pthread_create(&ramo[j], NULL, OLA, &j);
+    		k++; if(k == 3) break;
+    	}
+    	j++;
+    }
+
+    for (k = 0; k < 10; k++){
+    	printf("%d  ",vet[k] );
+    }
+    printf("\n");
+    printf("%lu\n",ramo[2] );
+
     
-   address.sin_family = AF_INET;    
-   address.sin_addr.s_addr = INADDR_ANY;    
-   address.sin_port = htons(15002);    
-    
-   if (bind(create_socket, (struct sockaddr *) &address, sizeof(address)) == 0){    
-      printf("Binding Socket\n");
-   }
-    
-    
-   while (1) {    
-      if (listen(create_socket, 10) < 0) {    
-         perror("server: listen");    
-         exit(1);    
-      }    
-    
-      if ((new_socket = accept(create_socket, (struct sockaddr *) &address, &addrlen)) < 0) {    
-         perror("server: accept");    
-         exit(1);    
-      }    
-    
-      if (new_socket > 0){    
-         printf("The Client is connected...\n");
-      }
-        
-      recv(new_socket, buffer, bufsize, 0);    
-      printf("Mensagem recebida: \n%s\n", buffer);    
-      write(new_socket, "HTTP/1.1 200 OK\n", 16); 
-      write(new_socket, "Content-length: 46\n", 19); 
-      write(new_socket, "Content-Type: text/html\n\n", 25); 
-      write(new_socket, "<html><body><H1>Hello world</H1></body></html>",46);   
-      close(new_socket);    
-   }    
-   close(create_socket);    
-   return 0;    
+
+   return 0;   /* O programa não vai chegar aqui.         */ 
+
 }
