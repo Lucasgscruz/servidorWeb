@@ -35,11 +35,23 @@ void error(const char *msg){
 	exit(1);
 }
 
+void configura_porta(int argc,char const *argv[],int *num_porta){
+    //Recebe o novo número da porta do servidor e atualiza.
+    if(argc >= 2 && (atoi(argv[1])>1024)) {
+        *num_porta=atoi(argv[1]);
+        printf("Número da Porta definido: %d\n",*num_porta);
+
+    }else{
+        printf("Utilizando a porta padrão definida: %d \n",*num_porta);
+    }
+}
+
+
 void resposta(int cliente){
 	/*Escreve a resposta para o cliente*/
 
 	int flag;
-	
+
     flag=write(cliente,"HTTP/1.1 200 OK\n\
     Server: Iterativo\n\
     Connection: close\n\
@@ -150,11 +162,9 @@ void forked(int num_porta){
 
 int main(int argc, char const *argv[]){
 	int modelo = menu();
+    int num_porta=5000;
 
-	do{
-		printf("\nEscolha o numero da prota do servidor: numero maior que 1024\n");
-		scanf("%d", &num_porta);
-	}while(num_porta < 1024);
+	configura_porta(argc,argv,num_porta);
 
 	if(modelo == 1)
 		iterativo(num_porta);

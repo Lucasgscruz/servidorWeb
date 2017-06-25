@@ -1,3 +1,13 @@
+/*
+   Desenvolvido por:
+    - Carlos Magno Geraldo Barbosa
+    - Lucas Geraldo Silva Cruz
+
+   Licença: MIT
+   Disciplina: Redes de Computadores
+   Universidade Federal de São João del Rei - UFSJ
+ */
+#include <strings.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -5,159 +15,115 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
-#include <arpa/inet.h>
-/* port we're listening on */
-#define PORT 2020
+void configura_porta(int argc,char const *argv[],int *num_porta){
+    //Recebe o novo número da porta do servidor e atualiza.
+    if(argc >= 2 && (atoi(argv[1])>1023)) {
+        *num_porta=atoi(argv[1]);
+        printf("Número da Porta definido: %d\n",*num_porta);
 
-int main(int argc, char *argv[])
-{
-    /* master file descriptor list */
-    fd_set master;
-    /* temp file descriptor list for select() */
-    fd_set read_fds;
-    /* server address */
-    struct sockaddr_in serveraddr;
-    /* client address */
-    struct sockaddr_in clientaddr;
-    /* maximum file descriptor number */
-    int fdmax;
-    /* listening socket descriptor */
-    int listener;
-    /* newly accept()ed socket descriptor */
-    int newfd;
-    /* buffer for client data */
-    char buf[1024];
-    int nbytes;
-    /* for setsockopt() SO_REUSEADDR, below */
-    int yes = 1;
-    int addrlen;
-    int i, j;
-    /* clear the master and temp sets */
-    FD_ZERO(&master);
-    FD_ZERO(&read_fds);
-
-    /* get the listener */
-    if((listener = socket(AF_INET, SOCK_STREAM, 0)) == -1)
-    {
-        perror("Server-socket() error lol!");
-        /*just exit lol!*/
-        exit(1);
+    }else{
+        printf("Utilizando a porta padrão definida: %d \n",*num_porta);
     }
-    printf("Server-socket() is OK...\n");
-    /*"address already in use" error message */
-    if(setsockopt(listener, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int)) == -1)
-    {
-        perror("Server-setsockopt() error lol!");
-        exit(1);
+}
+
+
+int main(int argc, char const *argv[]){
+    /* Variaveis para estabelecer a comunicacao */
+
+    int socket_principal = 0, num_porta = 5000, temp = 0,cliente=0,maior_descritor=0;
+    int max_clientes=15,socket_cliente[100]={0},i=0;
+    char mensagem[1024];
+    fd_set read_descritor,write_descritor;
+    socklen_t cliente_len;
+    struct sockaddr_in endereco_servidor, endereco_cliente;
+    configura_porta(argc,argv,&num_porta);
+    //
+    /* Abrindo o socket */
+    socket_principal = socket(AF_INET, SOCK_STREAM,0);
+    if(socket_principal < 0) {
+            printf("Erro ao criar o socket.\n");
     }
-    printf("Server-setsockopt() is OK...\n");
+    /* Preenche com zero */
+    bzero((char *)&endereco_servidor, sizeof(endereco_servidor));
+    endereco_servidor.sin_family = AF_INET;
+    endereco_servidor.sin_addr.s_addr = INADDR_ANY;
+    endereco_servidor.sin_port = htons(num_porta);
 
-    /* bind */
-    serveraddr.sin_family = AF_INET;
-    serveraddr.sin_addr.s_addr = INADDR_ANY;
-    serveraddr.sin_port = htons(PORT);
-    memset(&(serveraddr.sin_zero), '\0', 8);
-
-    if(bind(listener, (struct sockaddr *)&serveraddr, sizeof(serveraddr)) == -1)
-    {
-        perror("Server-bind() error lol!");
-        exit(1);
+    /* Associa uma porta ao socket */
+    if (bind(socket_principal, (struct sockaddr *) &endereco_servidor,sizeof(endereco_servidor)) < 0) {
+            printf("Erro ao Abrir a porta.\n");
+    }else{
+            printf("Aguardando conexão com os clientes Na porta [%d]...\n",num_porta);
     }
-    printf("Server-bind() is OK...\n");
 
-    /* listen */
-    if(listen(listener, 1000) == -1)
-    {
-        perror("Server-listen() error lol!");
-        exit(1);
+    /* Tamanho máximo da fila de clientes. */
+    if(listen(socket_principal, 10)<0){
+        printf("Erro na fila de clientes..");
+        exit(EXIT_FAILURE);
     }
-    printf("Server-listen() is OK...\n");
+    /* Estabelece a conexão com os clientes */
+    cliente_len = sizeof(endereco_cliente);
 
-    /* add the listener to the master set */
-    FD_SET(listener, &master);
-    /* keep track of the biggest file descriptor */
-    fdmax = listener; /* so far, it's this one*/
+    while(1){
 
-    /* loop */
-    for(;;)
-    {
-        /* copy it */
-        read_fds = master;
+        //inicializa o descritor.
+        FD_ZERO(&read_descritor);
+        FD_ZERO(&write_descritor);
 
-        if(select(fdmax+1, &read_fds, NULL, NULL, NULL) == -1)
-        {
-            perror("Server-select() error lol!");
-            exit(1);
+        //Adiciona o socket principal no conjunto..
+        FD_SET(socket_principal,&read_descritor);
+        FD_SET(socket_principal,&write_descritor);
+        maior_descritor=socket_principal;
+
+        for(i=0;i<max_clientes;i++){
+            temp= socket_cliente[i];
+
+            if(temp>0){
+
+                //Adiciona o indice do descritor na lista de leituras
+                FD_SET(temp,&read_descritor);
+                FD_SET(temp,&write_descritor);
+
+            }
+            if(temp>maior_descritor){
+                maior_descritor=temp;
+            }
+
         }
-        printf("Server-select() is OK...\n");
 
-        /*run through the existing connections looking for data to be read*/
-        for(i = 0; i <= fdmax; i++)
-        {
-            if(FD_ISSET(i, &read_fds))
-            { /* we got one... */
-                if(i == listener)
-                {
-                    /* handle new connections */
-                    addrlen = sizeof(clientaddr);
-                    if((newfd = accept(listener, (struct sockaddr *)&clientaddr, &addrlen)) == -1)
-                    {
-                        perror("Server-accept() error lol!");
-                    }
-                    else
-                    {
-                        printf("Server-accept() is OK...\n");
+        temp=0;
+        //seleciona o descritor que está em atividade.
+        temp= select(maior_descritor+1,&read_descritor,NULL,NULL,NULL);
+        if(temp<0){
+            printf("ERRO no Select\n");
+            exit(-1);
+        }
+        //Atividade no socket principal...
 
-                        FD_SET(newfd, &master); /* add to master set */
-                        if(newfd > fdmax)
-                        { /* keep track of the maximum */
-                            fdmax = newfd;
-                        }
-                        printf("%s: New connection from %s on socket %d\n", argv[0], inet_ntoa(clientaddr.sin_addr), newfd);
-                    }
-                }
-                else
-                {
-                    /* handle data from a client */
-                    if((nbytes = recv(i, buf, sizeof(buf), 0)) <= 0)
-                    {
-                        /* got error or connection closed by client */
-                        if(nbytes == 0)
-                            /* connection closed */
-                            printf("%s: socket %d hung up\n", argv[0], i);
-
-                        else
-                            perror("recv() error lol!");
-
-                        /* close it... */
-                        close(i);
-                        /* remove from master set */
-                        FD_CLR(i, &master);
-                    }
-                    else
-                    {
-                        /* we got some data from a client*/
-                        for(j = 0; j <= fdmax; j++)
-                        {
-                            /* send to everyone! */
-                            if(FD_ISSET(j, &master))
-                            {
-
-                                /* except the listener and ourselves */
-                                if(j != listener && j != i){
-                                    send(j, "HTTP/1.1 200 OK\n", 16,0);
-                                    send(j, "Content-length: 46\n", 19,0);
-                                    send(j, "Content-Type: text/html\n\n", 25,0);
-                                    send(j, "<html><body><H1>Hello world</H1></body></html>",46,0);
-                                    if(send(j, buf, nbytes, 0) == -1)
-                                        perror("send() error lol!");
-                                }
-                            }
-                        }
-                    }
+        if(FD_ISSET(socket_principal,&read_descritor)){
+            cliente=accept(socket_principal,(struct sockaddr *) &endereco_cliente, &cliente_len);
+            if(cliente<0) {
+                    printf("Erro na conexão.\n");
+                    exit(EXIT_FAILURE);
+            }else{
+                    printf("Cliente conectado ");
+            }
+            /*Envia mensagem para o cliente...*/
+            send(cliente, "HTTP/1.1 200 OK\n", 16,0);
+            send(cliente, "Content-length: 46\n", 19,0);
+            send(cliente, "Content-Type: text/html\n\n", 25,0);
+            send(cliente, "<html><body><H1>Hello world</H1></body></html>",46,0);
+            //Adiciona o cliente na lista de clientes.
+            for(i=0;i<max_clientes;i++){
+                if(socket_cliente[i]==0){
+                    socket_cliente[i]=cliente;
+                    break;
                 }
             }
+
         }
+
     }
+    close(socket_principal);
     return 0;
 }
