@@ -20,7 +20,7 @@ Para executar o servidor digite o comando:
 
         ./servidorweb <numero da porta> <modelo de servidor desejado>
 
-Exemplo de comando válido:
+Exemplo de comando de execução válido:
 
         ./servidorweb 5000 1
 
