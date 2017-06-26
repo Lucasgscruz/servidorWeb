@@ -1,6 +1,6 @@
 # Modelos de Servidores Web
 Projeto apresentado ao curso de Ciência da Computação, da
-Universidade Federal de São João del Rei, como requisito parcial 
+Universidade Federal de São João del Rei, como requisito parcial
 para obtenção da nota final da disciplina de Redes de Computadores.
 
 Este projeto disponibiliza quatro modelos de implementação de um servidor web,
@@ -18,11 +18,11 @@ terminal linux e digitar o seguinte comando:
 
 Para executar o servidor digite o comando:
 
-        ./saida <numero da porta> <modelo de servidor desejado>
+        ./servidorweb <numero da porta> <modelo de servidor desejado>
 
 Exemplo de comando válido:
 
-        ./saida 5000 1
+        ./servidorweb 5000 1
 
 
 ### Desenvolvido por:
