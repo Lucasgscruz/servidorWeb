@@ -1,4 +1,4 @@
 compilar: servidor.c servidores.c servidores.h
-	gcc -Wall servidor.c servidores.h -o saida -lpthread
+	gcc -Wall servidor.c servidores.h -o servidorweb -lpthread
 limpar:
-	rm -rf saida
+	rm -rf servidorweb
