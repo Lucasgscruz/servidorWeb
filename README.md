@@ -3,10 +3,26 @@ Projeto apresentado ao curso de Ciência da Computação, da
 Universidade Federal de São João del Rei, como requisito parcial 
 para obtenção da nota final da disciplina de Redes de Computadores.
 
-Para o bom funcionamento deste projeto, recomendamos que o mesmo seja executado em ambiente linux, bem como que suas dependências estejam instaladas no sistema. 
-
+Este projeto disponibiliza quatro modelos de implementação de um servidor web,
+sendo eles:
+- 1: Servidor web iterativo;
+- 2: Servidor utilizando fork;
+- 3: Servidor utilizando threads e fila de tarefas;
+- 4: Servidor concorrente utilizando select;
 
 ## Execução
+Para compilar os servidor, basta acessar a pasta raiz do projeto através de um
+terminal linux e digitar o seguinte comando:
+
+        make
+
+Para executar o servidor digite o comando:
+
+        ./saida <numero da porta> <modelo de servidor desejado>
+
+Exemplo de comando válido:
+
+        ./saida 5000 1
 
 
 ### Desenvolvido por:
