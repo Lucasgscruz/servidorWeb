@@ -3,8 +3,9 @@ Projeto apresentado ao curso de Ciência da Computação, da
 Universidade Federal de São João del Rei, como requisito parcial
 para obtenção da nota final da disciplina de Redes de Computadores.
 
-Este projeto disponibiliza quatro modelos de implementação de um servidor web,
+Este projeto apresenta quatro modelos de implementação de um servidor web,
 sendo eles:
+
 - 1: Servidor web iterativo;
 - 2: Servidor utilizando fork;
 - 3: Servidor utilizando threads e fila de tarefas;
@@ -18,7 +19,7 @@ terminal linux e digitar o seguinte comando:
 
 Para executar o servidor digite o comando:
 
-        ./servidorweb <numero da porta> <modelo de servidor desejado>
+        ./servidorweb <numero da porta> <modelo de servidor>
 
 Exemplo de comando de execução válido:
 
